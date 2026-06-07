@@ -1,11 +1,19 @@
 import React from 'react'
 import "../auth.form.scss"
 import { Link, useNavigate } from 'react-router';
-const login = () => {
+import { useAuth } from '../hooks/useauth.js';
+import { useState } from 'react';
+const Login = () => {
   const navigate = useNavigate();
+  const { handleLogin, isLoading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
+    handleLogin({email, password});
+  }
+  if (isLoading) {
+    return <p>Loading...</p>
   }
   return (
     <div>
@@ -13,11 +21,11 @@ const login = () => {
         
         <form onSubmit={handleSubmit}>
             <div className='input-container'>
-                  <h1 class="header">Login</h1>
-       <h1 class="input-label">Email</h1>
-        <input className='input-field' type="text" placeholder='email' />
-    <h1 class="input-label">Password</h1>
-        <input className='input-field' type="password" placeholder='password' />
+                  <h1 className="header">Login</h1>
+       <h1 className="input-label">Email</h1>
+        <input className='input-field' type="text" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+    <h1 className="input-label">Password</h1>
+        <input className='input-field' type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} />
         <button className='btn-primary' type='submit'>Login</button>
         </div>
         </form>
@@ -28,4 +36,4 @@ const login = () => {
   )
 }
 
-export default login
+export default Login

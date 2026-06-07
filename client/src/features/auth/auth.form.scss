@@ -1,5 +1,5 @@
 div {
-    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAL56GVgFpoh5O2rTKoIVsKaaoE9oX92E49g&s");
+    // background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAL56GVgFpoh5O2rTKoIVsKaaoE9oX92E49g&s");
     background-size: cover;
 
     main {
@@ -40,8 +40,9 @@ div {
             background: none;
             border: none;
             color: #ff5c5c;
-            text-decoration: underline;
+            text-decoration: none;
             cursor: pointer;
+            
         }
     }
 }

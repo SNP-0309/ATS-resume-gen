@@ -3,10 +3,8 @@
  import bcrypt from 'bcryptjs';
  import jwt from 'jsonwebtoken';
  import dotenv from 'dotenv';
- import cookies from 'cookie-parser';
 
 dotenv.config();
-cookies();
 
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -60,6 +58,27 @@ const loginUser = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+const logoutUser = (req, res) => {
+    res.clearCookie('token');
+    res.json({ message: 'Logout successful' });
+};
+const getuser = async (req, res) => {
+    try {
+        const token = req.cookies.token;
 
-export { registerUser as register, loginUser as login };
+        if (!token) {
+            return res.status(401).json({ message: 'No token, authorization denied' });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+};
 
+export { registerUser as register, loginUser as login, logoutUser as logout, getuser as getUser };
