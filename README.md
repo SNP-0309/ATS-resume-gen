@@ -51,7 +51,7 @@ LinkedIn Profile Optimizer
 Career Roadmap Generator
 Multi-template Resume Export
 Installation
-git clone <repository-url>
+git clone https://github.com/SNP-0309/ATS-resume-gen.git
 
 cd ATS-Resume-Generator
 

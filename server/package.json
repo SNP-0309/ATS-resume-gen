@@ -11,6 +11,10 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SNP-0309/ATS-resume-gen.git"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie": "^1.1.1",
