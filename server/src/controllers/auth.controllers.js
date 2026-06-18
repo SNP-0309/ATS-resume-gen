@@ -1,5 +1,6 @@
 
  import User from "../models/user.model.js";
+ import TokenBlacklist from "../models/tokenBlacklist.model.js";
  import bcrypt from 'bcryptjs';
  import jwt from 'jsonwebtoken';
  import dotenv from 'dotenv';
@@ -58,9 +59,31 @@ const loginUser = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-const logoutUser = (req, res) => {
-    res.clearCookie('token');
-    res.json({ message: 'Logout successful' });
+const logoutUser = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+
+        if (!token) {
+            res.clearCookie('token');
+            return res.json({ message: 'Logout successful' });
+        }
+
+        // Decode token to get expiration time
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // Add token to blacklist with expiration time
+        await TokenBlacklist.create({
+            token,
+            expiresAt: new Date(decoded.exp * 1000)  // exp is in seconds, convert to milliseconds
+        });
+
+        res.clearCookie('token');
+        res.json({ message: 'Logout successful and token blacklisted' });
+    } catch (err) {
+        console.error(err.message);
+        res.clearCookie('token');
+        res.json({ message: 'Logout successful' });
+    }
 };
 const getuser = async (req, res) => {
     try {
