@@ -1,19 +1,26 @@
+import React from "react";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useauth";
-import { useNavigate } from "react-router-dom";
-
-import React, { Children } from 'react'
 
 const ProtectedRoute = ({ children }) => {
-    const {loading, user} = useAuth();
-    const navigate =  useNavigate();
+  const { user, isLoading } = useAuth();
 
-    if(loading){
-        return (<main><h1>Loading.......</h1></main>)
-    }
-    if(!user){
-         navigate("/login")
-    }
-    return children
-}
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <main>
+        <h1>Loading...</h1>
+      </main>
+    );
+  }
 
-export default ProtectedRoute
+  // Redirect to login if user is not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Render protected content
+  return children;
+};
+
+export default ProtectedRoute;
