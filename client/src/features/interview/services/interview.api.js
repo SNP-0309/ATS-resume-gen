@@ -20,3 +20,25 @@ export const generateInterviewReport = async (formData) => {
     );
   }
 };
+
+export const getInterviewReportById = async (interviewId) => {
+  try {
+    const response = await API_URL.get(`/${interviewId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch interview report"
+    );
+  }
+};
+
+export const getUserInterviewReports = async () => {
+  try {
+    const response = await API_URL.get("/");
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch user interview reports"
+    );
+  }
+};

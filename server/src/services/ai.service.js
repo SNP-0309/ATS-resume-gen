@@ -1,100 +1,89 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
-const interviewReportSchema = z.object({
-  matchScore: z
-    .number()
-    .describe(
-      "A score between 0 and 100 indicating how well the candidate's profile matches the job describe",
-    ),
-  technicalQuestions: z
-    .array(
-      z.object({
-        question: z
-          .string()
-          .describe("The technical question can be asked in the interview"),
-        intention: z
-          .string()
-          .describe("The intention of interviewer behind asking this question"),
-        answer: z
-          .string()
-          .describe(
-            "How to answer this question, what points to cover, what approach to take etc.",
-          ),
-      }),
-    )
-    .describe(
-      "Technical questions that can be asked in the interview along with their intention and how to answer them",
-    ),
-  behavioralQuestions: z
-    .array(
-      z.object({
-        question: z
-          .string()
-          .describe("The technical question can be asked in the interview"),
-        intention: z
-          .string()
-          .describe("The intention of interviewer behind asking this question"),
-        answer: z
-          .string()
-          .describe(
-            "How to answer this question, what points to cover, what approach to take etc.",
-          ),
-      }),
-    )
-    .describe(
-      "Behavioral questions that can be asked in the interview along with their intention and how to answer them",
-    ),
-  skillGaps: z
-    .array(
-      z.object({
-        skill: z.string().describe("The skill which the candidate is lacking"),
-        severity: z
-          .enum(["low", "medium", "high"])
-          .describe(
-            "The severity of this skill gap, i.e. how important is this skill for the job and how much it can impact the candidate's chances",
-          ),
-      }),
-    )
-    .describe(
-      "List of skill gaps in the candidate's profile along with their severity",
-    ),
-  preparationPlan: z
-    .array(
-      z.object({
-        day: z
-          .number()
-          .describe("The day number in the preparation plan, starting from 1"),
-        focus: z
-          .string()
-          .describe(
-            "The main focus of this day in the preparation plan, e.g. data structures, system design, mock interviews etc.",
-          ),
-        tasks: z
-          .array(z.string())
-          .describe(
-            "List of tasks to be done on this day to follow the preparation plan, e.g. read a specific book or article, solve a set of problems, watch a video etc.",
-          ),
-      }),
-    )
-    .describe(
-      "A day-wise preparation plan for the candidate to follow in order to prepare for the interview effectively",
-    ),
-  title: z
-    .string()
-    .describe(
-      "The title of the job for which the interview report is generated",
-    ),
-});
+
+const interviewReportSchema = {
+  type: "object",
+  properties: {
+    matchScore: {
+      type: "integer",
+      description: "A score between 0 and 100 indicating how well the candidate's profile matches the job description."
+    },
+    title: {
+      type: "string",
+      description: "The title of the job for which the interview report is generated."
+    },
+    optimizedResume: {
+      type: "string",
+      description: "An ATS-optimized professional resume in clean Markdown format tailored specifically to match the job description, using details from the user's resume and self description."
+    },
+    technicalQuestions: {
+      type: "array",
+      description: "Technical questions that can be asked in the interview along with their intention and how to answer them.",
+      items: {
+        type: "object",
+        properties: {
+          question: { type: "string", description: "The technical question." },
+          intention: { type: "string", description: "The intention of the interviewer behind asking this question." },
+          answer: { type: "string", description: "How to answer this question. Keep it simple, clear, and user-friendly. Avoid overly technical, complicated, or dense jargon." }
+        },
+        required: ["question", "intention", "answer"]
+      }
+    },
+    behavioralQuestions: {
+      type: "array",
+      description: "Behavioral questions that can be asked in the interview along with their intention and how to answer them.",
+      items: {
+        type: "object",
+        properties: {
+          question: { type: "string", description: "The behavioral question." },
+          intention: { type: "string", description: "The intention of the interviewer behind asking this question." },
+          answer: { type: "string", description: "How to answer this question. Keep it simple, clear, and user-friendly. Avoid overly technical, complicated, or dense jargon." }
+        },
+        required: ["question", "intention", "answer"]
+      }
+    },
+    skillGaps: {
+      type: "array",
+      description: "List of skill gaps in the candidate's profile along with their severity.",
+      items: {
+        type: "object",
+        properties: {
+          skill: { type: "string", description: "The skill which the candidate is lacking." },
+          severity: { type: "string", enum: ["low", "medium", "high"], description: "The severity of this skill gap." }
+        },
+        required: ["skill", "severity"]
+      }
+    },
+    preparationPlan: {
+      type: "array",
+      description: "A day-wise preparation plan for the candidate to follow.",
+      items: {
+        type: "object",
+        properties: {
+          day: { type: "integer", description: "The day number, starting from 1." },
+          focus: { type: "string", description: "The main focus of this day." },
+          tasks: {
+            type: "array",
+            items: { type: "string" },
+            description: "List of tasks to be done on this day."
+          }
+        },
+        required: ["day", "focus", "tasks"]
+      }
+    }
+  },
+  required: ["matchScore", "title", "optimizedResume", "technicalQuestions", "behavioralQuestions", "skillGaps", "preparationPlan"]
+};
 
 async function GenarateInterviewReport({
   resume,
   selfdescription,
   jobdescription,
 }) {
-  const prompt = `You are an expert interview coach and career advisor. Generate a comprehensive interview report for a candidate based on their resume and the job description they are applying for.
+  const prompt = `You are an expert interview coach and career advisor. Generate a comprehensive interview report for a candidate based on their resume and the job description they are applying for. Also generate an optimized version of the resume tailored specifically to this job description.
+
+IMPORTANT: All answers in the "technicalQuestions" and "behavioralQuestions" sections must be written using clear, simple, and user-understandable language. Avoid overly dense technical terms or complicated words. Explain concepts plainly so they are easy for any user to digest and remember.
 
 Resume: ${resume}
 Self Description: ${selfdescription}
@@ -108,14 +97,14 @@ Please provide the response in the following JSON format:
     {
       "question": "<question>",
       "intention": "<interviewer's intention>",
-      "answer": "<how to answer>"
+      "answer": "<how to answer in simple, user-friendly language>"
     }
   ],
   "behavioralQuestions": [
     {
       "question": "<question>",
       "intention": "<interviewer's intention>",
-      "answer": "<how to answer>"
+      "answer": "<how to answer in simple, user-friendly language>"
     }
   ],
   "skillGaps": [
@@ -130,21 +119,37 @@ Please provide the response in the following JSON format:
       "focus": "<focus area>",
       "tasks": ["<task1>", "<task2>"]
     }
-  ]
+  ],
+  "optimizedResume": "<Your professionally written, ATS-friendly markdown resume. Highlight relevant skills and experience tailored to the target job description while maintaining truthfulness. Format it nicely with clear headings, lists, and spacing.>"
 }`;
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+    let model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
     });
 
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: zodToJsonSchema(interviewReportSchema),
-      },
-    });
+    let result;
+    try {
+      result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: interviewReportSchema,
+        },
+      });
+    } catch (innerError) {
+      console.warn("gemini-2.5-flash failed. Trying gemini-1.5-flash-latest fallback...", innerError);
+      model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash-latest",
+      });
+      result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: interviewReportSchema,
+        },
+      });
+    }
 
     const response = result.response;
     const text = response.text();
@@ -156,4 +161,4 @@ Please provide the response in the following JSON format:
   }
 }
 
-export default GenarateInterviewReport
+export default GenarateInterviewReport;

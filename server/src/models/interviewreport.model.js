@@ -107,6 +107,10 @@ const interviewReportSchema = new mongoose.Schema(
 
     preparationPlan: [preparationPlanSchema],
 
+    optimizedResume: {
+      type: String,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Change to your actual model name if different

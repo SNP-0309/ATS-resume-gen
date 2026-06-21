@@ -1,10 +1,19 @@
 import React, { useState } from 'react'
 import '../style/home.scss'
 import { generateInterviewReport } from '../services/interview.api'
+import { useNavigate } from 'react-router-dom'
 
 const homw = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [selectedFile, setSelectedFile] = useState(null)
+  const navigate = useNavigate()
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0])
+    }
+  }
 
   const handleGenerateReport = async (e) => {
     e.preventDefault()
@@ -14,7 +23,7 @@ const homw = () => {
     try {
       const jobDescription = document.getElementById('jobDescription').value
       const selfDescription = document.getElementById('selfDescription').value
-      const resumeFile = document.getElementById('resume').files[0]
+      const resumeFile = selectedFile || document.getElementById('resume').files[0]
 
       if (!jobDescription.trim()) {
         throw new Error('Please enter a job description')
@@ -34,8 +43,11 @@ const homw = () => {
       const response = await generateInterviewReport(formData)
       console.log('Interview report generated:', response)
       
-      // TODO: Navigate to results page or display results
-      alert('Interview report generated successfully!')
+      if (response && response.interviewreport && response.interviewreport._id) {
+        navigate(`/interview/${response.interviewreport._id}`)
+      } else {
+        alert('Interview report generated successfully!')
+      }
     } catch (err) {
       setError(err.message)
       console.error('Error:', err)
@@ -71,11 +83,22 @@ const homw = () => {
                     </div>
                     <p className="section-desc">Upload your current resume to contextualize your experience against the role requirements.</p>
                     <div className="upload-area">
-                        <div className="upload-icon">☁️</div>
-                        <p>Drag & Drop Resume</p>
-                        <small>PDF, DOCX up to 5MB</small>
-                        <label htmlFor="resume" className="file-label">Or Choose File</label>
-                        <input hidden type="file" name='resume' id="resume" accept='.pdf,.docx'/>
+                        {selectedFile ? (
+                            <>
+                                <div className="upload-icon" style={{ color: '#10b981' }}>✓</div>
+                                <p style={{ fontWeight: 'bold' }}>{selectedFile.name}</p>
+                                <small>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</small>
+                                <label htmlFor="resume" className="file-label">Change File</label>
+                            </>
+                        ) : (
+                            <>
+                                <div className="upload-icon">☁️</div>
+                                <p>Drag & Drop Resume</p>
+                                <small>PDF, DOC, DOCX up to 5MB</small>
+                                <label htmlFor="resume" className="file-label">Or Choose File</label>
+                            </>
+                        )}
+                        <input hidden type="file" name='resume' id="resume" accept='.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document' onChange={handleFileChange}/>
                     </div>
                 </div>
 
