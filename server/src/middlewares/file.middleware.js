@@ -3,6 +3,6 @@ import multer from "multer";
 export const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fieldSize: 3 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024,
   },
 });

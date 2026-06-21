@@ -1,0 +1,259 @@
+.home {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    padding: 20px 20px 40px 20px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+height: 100%;
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #aaa;
+        }
+    }
+
+    .interview-group {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        margin-bottom: 40px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .left {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+
+            .icon {
+                font-size: 20px;
+            }
+
+            h2 {
+                font-size: 18px;
+                font-weight: 600;
+                margin: 0;
+            }
+        }
+
+        .section-desc {
+            font-size: 13px;
+            color: #999;
+            margin: 0 0 15px 0;
+            line-height: 1.5;
+        }
+
+        textarea {
+            flex: 1;
+            min-height: 250px;
+            max-height: 350px;
+            padding: 15px;
+            background-color: transparent;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #ccc;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+
+            &::placeholder {
+                color: #555;
+            }
+
+            &:focus {
+                outline: none;
+                border-color: #666;
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+        }
+    }
+
+    .right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .right-section {
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 5px;
+
+                .icon {
+                    font-size: 20px;
+                }
+
+                h2 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 0;
+                }
+            }
+
+            .section-desc {
+                font-size: 12px;
+                color: #999;
+                margin: 0 0 15px 0;
+                line-height: 1.5;
+            }
+
+            textarea {
+                min-height: 100px;
+                max-height: 150px;
+                padding: 12px;
+                background-color: transparent;
+                border: 1px solid #555;
+                border-radius: 6px;
+                color: #ccc;
+                font-size: 13px;
+                font-family: inherit;
+                resize: vertical;
+
+                &::placeholder {
+                    color: #666;
+                }
+
+                &:focus {
+                    outline: none;
+                    border-color: #777;
+                    background-color: rgba(255, 255, 255, 0.03);
+                }
+            }
+        }
+
+        .upload-area {
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.01);
+
+            &:hover {
+                border-color: #777;
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .upload-icon {
+                font-size: 32px;
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: #ddd;
+            }
+
+            small {
+                font-size: 12px;
+                color: #888;
+            }
+
+            .file-label {
+                display: inline-block;
+                margin-top: 10px;
+                padding: 8px 16px;
+                background-color: rgba(200, 200, 200, 0.1);
+                border: 1px solid #666;
+                border-radius: 4px;
+                color: #ddd;
+                font-size: 13px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background-color: rgba(200, 200, 200, 0.15);
+                    border-color: #888;
+                }
+            }
+        }
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+        .button {
+            padding: 14px 32px;
+            background-color: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover:not(:disabled) {
+                background-color: #ff6b6b;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(255, 82, 82, 0.3);
+            }
+
+            &:active:not(:disabled) {
+                transform: translateY(0);
+            }
+
+            &:disabled {
+                background-color: #cc4444;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+        }
+    }
+
+    .error-message {
+        max-width: 1200px;
+        margin: 0 auto 20px;
+        padding: 12px 16px;
+        background-color: rgba(255, 82, 82, 0.1);
+        border: 1px solid #ff5252;
+        border-radius: 6px;
+        color: #ff9999;
+        font-size: 14px;
+    }
+    
+
+}
