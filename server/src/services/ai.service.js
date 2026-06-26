@@ -81,35 +81,45 @@ async function GenarateInterviewReport({
   selfdescription,
   jobdescription,
 }) {
-  const prompt = `You are an expert interview coach and career advisor. Generate a comprehensive interview report for a candidate based on their resume and the job description they are applying for. Also generate an optimized version of the resume tailored specifically to this job description.
+  const prompt = `You are an expert interview coach, ATS resume specialist, and career advisor. Your task is to analyze the candidate's resume and generate a comprehensive, fully personalized interview preparation report.
 
-IMPORTANT: All answers in the "technicalQuestions" and "behavioralQuestions" sections must be written using clear, simple, and user-understandable language. Avoid overly dense technical terms or complicated words. Explain concepts plainly so they are easy for any user to digest and remember.
+=== CANDIDATE DATA ===
+Resume Content:
+${resume}
 
-Resume: ${resume}
 Self Description: ${selfdescription}
-Job Description: ${jobdescription}
+
+Target Job Description: ${jobdescription}
+
+=== STRICT RULES — MUST FOLLOW ===
+1. NEVER use placeholder text like [Your Name], [Your Email], [Company Name], [Your Degree], [City], [Date], or any bracketed placeholders anywhere in your response.
+2. Extract the candidate's REAL name, email, phone, LinkedIn, GitHub, location, education, experience, and skills DIRECTLY from the Resume Content above.
+3. The optimizedResume must contain ONLY the candidate's actual information from the resume. Do not invent or fabricate any details.
+4. If a piece of information is genuinely not present in the resume, simply omit that field — do NOT insert a placeholder for it.
+5. All answers in technicalQuestions and behavioralQuestions must be written in clear, simple, friendly language — no dense jargon.
+6. The optimizedResume must be a complete, professional, ATS-optimized Markdown resume using ONLY the real data extracted from the resume above, rewritten and tailored to the target job description.
 
 Please provide the response in the following JSON format:
 {
   "matchScore": <number between 0-100>,
-  "title": "<job title>",
+  "title": "<job title from the job description>",
   "technicalQuestions": [
     {
-      "question": "<question>",
-      "intention": "<interviewer's intention>",
+      "question": "<relevant technical question>",
+      "intention": "<what the interviewer wants to assess>",
       "answer": "<how to answer in simple, user-friendly language>"
     }
   ],
   "behavioralQuestions": [
     {
-      "question": "<question>",
-      "intention": "<interviewer's intention>",
+      "question": "<behavioral question>",
+      "intention": "<what the interviewer wants to assess>",
       "answer": "<how to answer in simple, user-friendly language>"
     }
   ],
   "skillGaps": [
     {
-      "skill": "<skill name>",
+      "skill": "<missing skill name>",
       "severity": "<low|medium|high>"
     }
   ],
@@ -120,7 +130,7 @@ Please provide the response in the following JSON format:
       "tasks": ["<task1>", "<task2>"]
     }
   ],
-  "optimizedResume": "<Your professionally written, ATS-friendly markdown resume. Highlight relevant skills and experience tailored to the target job description while maintaining truthfulness. Format it nicely with clear headings, lists, and spacing.>"
+  "optimizedResume": "<A complete ATS-optimized professional resume in clean Markdown format. Use ONLY the candidate's REAL information extracted from the resume above — their actual name, actual contact details, actual experience, actual projects, actual education, actual skills. Tailor the content to match the job description. NO placeholders allowed.>"
 }`;
 
   try {
