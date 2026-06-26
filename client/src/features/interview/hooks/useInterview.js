@@ -2,7 +2,20 @@ import { useContext, useState, useCallback } from 'react'
 import axios from 'axios'
 import { InterviewContext } from '../interview.context.jsx'
 
-const API_URL = 'http://localhost:3000/api/interview'
+const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/interview`
+
+// Helper: returns axios config with Bearer token attached
+const authConfig = (extra = {}) => {
+  const token = localStorage.getItem('token')
+  return {
+    ...extra,
+    headers: {
+      ...(extra.headers || {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    withCredentials: true,
+  }
+}
 
 export const useInterview = () => {
   const { report, setReport, loading, setLoading, reports, setReports } = useContext(InterviewContext)
@@ -13,9 +26,7 @@ export const useInterview = () => {
     setError('')
 
     try {
-      const response = await axios.get(`${API_URL}/${interviewId}`, {
-        withCredentials: true,
-      })
+      const response = await axios.get(`${BASE_URL}/${interviewId}`, authConfig())
       setReport(response.data.data || response.data)
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to fetch interview report'
@@ -31,9 +42,7 @@ export const useInterview = () => {
     setError('')
 
     try {
-      const response = await axios.get(`${API_URL}/`, {
-        withCredentials: true,
-      })
+      const response = await axios.get(`${BASE_URL}/`, authConfig())
       setReports(response.data.data || [])
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to fetch interview reports'
@@ -46,12 +55,11 @@ export const useInterview = () => {
 
   const getResumePdf = useCallback(async (interviewId) => {
     try {
-      const response = await axios.get(`${API_URL}/${interviewId}/resume`, {
-        withCredentials: true,
-        responseType: 'blob',
-      })
+      const response = await axios.get(
+        `${BASE_URL}/${interviewId}/resume`,
+        authConfig({ responseType: 'blob' })
+      )
 
-      // Explicitly construct the Blob with 'application/pdf' MIME type
       const blob = new Blob([response.data], { type: 'application/pdf' })
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
