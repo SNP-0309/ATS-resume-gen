@@ -138,9 +138,9 @@ Please provide the response in the following JSON format:
         },
       });
     } catch (innerError) {
-      console.warn("gemini-2.5-flash failed. Trying gemini-1.5-flash-latest fallback...", innerError);
+      console.warn("gemini-2.5-flash failed. Trying gemini-2.0-flash-lite fallback...", innerError);
       model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash-latest",
+        model: "gemini-2.0-flash-lite",
       });
       result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],

@@ -7,6 +7,7 @@ import {
   getUser,
 } from "../services/auth.api.js";
 
+
 export const useAuth = () => {
   const { user, setUser, isLoading, setIsLoading } =
     useContext(AuthContext);
