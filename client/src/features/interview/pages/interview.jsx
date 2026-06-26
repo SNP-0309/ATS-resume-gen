@@ -327,6 +327,16 @@ const Interview = () => {
                 {/* ── Right Sidebar ── */}
                 <aside className='interview-sidebar'>
 
+                    {/* Job Title */}
+                    {report.title && (
+                        <div className='sidebar-title'>
+                            <p className='sidebar-title__label'>Role</p>
+                            <p className='sidebar-title__value'>{report.title}</p>
+                        </div>
+                    )}
+
+                    {report.title && <div className='sidebar-divider' />}
+
                     {/* Match Score */}
                     <div className='match-score'>
                         <p className='match-score__label'>Match Score</p>
@@ -334,7 +344,11 @@ const Interview = () => {
                             <span className='match-score__value'>{report.matchScore}</span>
                             <span className='match-score__pct'>%</span>
                         </div>
-                        <p className='match-score__sub'>Strong match for this role</p>
+                        <p className='match-score__sub'>
+                            {report.matchScore >= 80 ? 'Strong match for this role' :
+                             report.matchScore >= 60 ? 'Good match with some gaps' :
+                             'Room for improvement'}
+                        </p>
                     </div>
 
                     <div className='sidebar-divider' />

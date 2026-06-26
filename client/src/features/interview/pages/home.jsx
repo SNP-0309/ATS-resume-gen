@@ -3,7 +3,7 @@ import '../style/home.scss'
 import { generateInterviewReport } from '../services/interview.api'
 import { useNavigate } from 'react-router-dom'
 
-const homw = () => {
+const Home = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
@@ -122,4 +122,4 @@ const homw = () => {
   )
 }
 
-export default homw
+export default Home

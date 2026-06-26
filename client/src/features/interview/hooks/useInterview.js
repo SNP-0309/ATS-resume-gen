@@ -26,6 +26,24 @@ export const useInterview = () => {
     }
   }, [setLoading, setReport])
 
+  const getAllReports = useCallback(async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await axios.get(`${API_URL}/`, {
+        withCredentials: true,
+      })
+      setReports(response.data.data || [])
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to fetch interview reports'
+      setError(errorMsg)
+      console.error('Error fetching reports:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [setLoading, setReports])
+
   const getResumePdf = useCallback(async (interviewId) => {
     try {
       const response = await axios.get(`${API_URL}/${interviewId}/resume`, {
@@ -54,7 +72,9 @@ export const useInterview = () => {
     setReport,
     loading,
     error,
+    reports,
     getReportById,
+    getAllReports,
     getResumePdf,
   }
 }
