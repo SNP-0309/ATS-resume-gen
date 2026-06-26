@@ -5,6 +5,15 @@ const API_URL = axios.create({
   withCredentials: true,
 });
 
+// Attach token from localStorage to every request
+API_URL.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const registerUser = async ({ name, email, password }) => {
   try {
     const response = await API_URL.post("/register", {
@@ -12,6 +21,10 @@ export const registerUser = async ({ name, email, password }) => {
       email,
       password,
     });
+
+    if (response.data.token) {
+      localStorage.setItem("token", response.data.token);
+    }
 
     return response.data;
   } catch (error) {
@@ -28,6 +41,10 @@ export const loginUser = async ({ email, password }) => {
       password,
     });
 
+    if (response.data.token) {
+      localStorage.setItem("token", response.data.token);
+    }
+
     return response.data;
   } catch (error) {
     throw new Error(
@@ -39,9 +56,10 @@ export const loginUser = async ({ email, password }) => {
 export const logoutUser = async () => {
   try {
     const response = await API_URL.post("/logout");
-
+    localStorage.removeItem("token");
     return response.data;
   } catch (error) {
+    localStorage.removeItem("token"); // always clear on logout
     throw new Error(
       error.response?.data?.message || "Logout failed"
     );
@@ -51,7 +69,6 @@ export const logoutUser = async () => {
 export const getUser = async () => {
   try {
     const response = await API_URL.get("/user");
-
     return response.data;
   } catch (error) {
     throw new Error(
